@@ -1,7 +1,7 @@
 import React from 'react';
 import { Database, Zap, TrendingUp, Filter } from 'lucide-react';
 
-export default function StatsBanner({ totalLaptops, filteredCount, avgScore, avgPrice }) {
+export default function StatsBanner({ totalLaptops, filteredCount, avgScore, avgPrice, isLiveApi = false }) {
   const formatPrice = (price) => `₹${Number(price).toLocaleString('en-IN')}`;
 
   return (
@@ -97,8 +97,14 @@ export default function StatsBanner({ totalLaptops, filteredCount, avgScore, avg
           <div style={{ fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>
             Scoring Model
           </div>
-          <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
-            Random Forest <span className="badge badge-emerald" style={{ fontSize: '10px' }}>R² 0.99</span>
+          <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            Random Forest
+            <span className="badge badge-emerald" style={{ fontSize: '10px' }}>R² 0.99</span>
+            {isLiveApi ? (
+              <span className="badge badge-blue" style={{ fontSize: '10px' }}>⚡ FastAPI Live</span>
+            ) : (
+              <span className="badge badge-neutral" style={{ fontSize: '10px' }}>Local Dataset</span>
+            )}
           </div>
         </div>
       </div>

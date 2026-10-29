@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Laptop, Sliders, BarChart3, Columns } from 'lucide-react';
+import { checkBackendHealth } from '../services/api';
 
 export default function Navbar({ activeTab, setActiveTab, compareCount, onOpenCompare }) {
+  const [apiHealth, setApiHealth] = useState(null);
+
+  useEffect(() => {
+    checkBackendHealth().then(res => setApiHealth(res.online));
+  }, []);
   return (
     <header style={{
       backgroundColor: '#ffffff',
@@ -45,6 +51,16 @@ export default function Navbar({ activeTab, setActiveTab, compareCount, onOpenCo
               <span className="badge badge-neutral" style={{ fontSize: '10px' }}>
                 Random Forest ML
               </span>
+              {apiHealth !== null && (
+                <span
+                  className={apiHealth ? "badge badge-emerald" : "badge badge-neutral"}
+                  style={{ fontSize: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  title={apiHealth ? "FastAPI Server Running on port 8000" : "FastAPI Server Offline (using client dataset)"}
+                >
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: apiHealth ? '#10b981' : '#94a3b8' }} />
+                  {apiHealth ? 'FastAPI Active' : 'FastAPI Offline'}
+                </span>
+              )}
             </div>
             <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
               Hardware specification scoring and personalized filtering

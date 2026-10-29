@@ -1,0 +1,96 @@
+{
+  "mae": 0.47,
+  "rmse": 1.12,
+  "r2_score": 0.992,
+  "total_records": 986,
+  "features_count": 16,
+  "top_features": [
+    {
+      "feature": "categorical__gpu_type_integrated",
+      "importance": 0.4032
+    },
+    {
+      "feature": "remainder__num_threads",
+      "importance": 0.1801
+    },
+    {
+      "feature": "remainder__has_dedicated_gpu",
+      "importance": 0.1335
+    },
+    {
+      "feature": "categorical__gpu_type_dedicated",
+      "importance": 0.1313
+    },
+    {
+      "feature": "remainder__Price",
+      "importance": 0.0527
+    },
+    {
+      "feature": "categorical__processor_tier_celeron",
+      "importance": 0.025
+    },
+    {
+      "feature": "categorical__processor_tier_core i5",
+      "importance": 0.0157
+    },
+    {
+      "feature": "remainder__ram_memory",
+      "importance": 0.0149
+    },
+    {
+      "feature": "categorical__processor_tier_core i3",
+      "importance": 0.012
+    },
+    {
+      "feature": "categorical__processor_tier_core i9",
+      "importance": 0.0112
+    },
+    {
+      "feature": "remainder__num_cores",
+      "importance": 0.0073
+    },
+    {
+      "feature": "categorical__processor_tier_ryzen 5",
+      "importance": 0.0024
+    },
+    {
+      "feature": "remainder__gpu_vram",
+      "importance": 0.0023
+    },
+    {
+      "feature": "remainder__primary_storage_capacity",
+      "importance": 0.0014
+    },
+    {
+      "feature": "categorical__processor_tier_ryzen 9",
+      "importance": 0.0011
+    },
+    {
+      "feature": "categorical__processor_tier_core i7",
+      "importance": 0.001
+    },
+    {
+      "feature": "remainder__resolution_width",
+      "importance": 0.0007
+    },
+    {
+      "feature": "remainder__resolution_height",
+      "importance": 0.0007
+    },
+    {
+      "feature": "remainder__display_size",
+      "importance": 0.0006
+    },
+    {
+      "feature": "categorical__gpu_brand_amd",
+      "importance": 0.0003
+    }
+  ],
+  "hardware_weights": {
+    "cpu_weight": 0.4,
+    "gpu_weight": 0.4,
+    "ram_weight": 0.1,
+    "storage_weight": 0.05,
+    "display_weight": 0.05
+  }
+}

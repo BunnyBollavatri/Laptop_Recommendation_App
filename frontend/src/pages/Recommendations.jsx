@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import FilterSidebar from '../components/FilterSidebar';
 import LaptopCard from '../components/LaptopCard';
 import StatsBanner from '../components/StatsBanner';
 import { Search, ArrowUpDown, Inbox, Sparkles } from 'lucide-react';
+import { getRecommendationsFromAPI } from '../services/api';
 
 export default function Recommendations({
   allLaptops,
@@ -91,29 +92,66 @@ export default function Recommendations({
     return result;
   }, [allLaptops, searchTerm, filters, sortBy]);
 
+  const [isLiveApi, setIsLiveApi] = useState(false);
+  const [apiData, setApiData] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchApi = async () => {
+      try {
+        const data = await getRecommendationsFromAPI({
+          ...filters,
+          searchTerm,
+          sortBy
+        });
+        if (isMounted) {
+          setApiData(data);
+          setIsLiveApi(true);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setIsLiveApi(false);
+          setApiData(null);
+        }
+      }
+    };
+
+    const timer = setTimeout(fetchApi, 150);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [filters, searchTerm, sortBy]);
+
+  const displayLaptops = isLiveApi && apiData ? apiData.laptops : filteredLaptops;
+  const currentTotal = isLiveApi && apiData ? apiData.total_matching : filteredLaptops.length;
+
   const avgScore = useMemo(() => {
+    if (isLiveApi && apiData) return apiData.avg_score;
     if (!filteredLaptops.length) return 0;
     const total = filteredLaptops.reduce((acc, curr) => acc + curr.performance_score, 0);
     return (total / filteredLaptops.length).toFixed(1);
-  }, [filteredLaptops]);
+  }, [filteredLaptops, isLiveApi, apiData]);
 
   const avgPrice = useMemo(() => {
+    if (isLiveApi && apiData) return apiData.avg_price;
     if (!filteredLaptops.length) return 0;
     const total = filteredLaptops.reduce((acc, curr) => acc + curr.price, 0);
     return Math.round(total / filteredLaptops.length);
-  }, [filteredLaptops]);
+  }, [filteredLaptops, isLiveApi, apiData]);
 
-  const paginatedLaptops = filteredLaptops.slice(0, page * pageSize);
-  const hasMore = paginatedLaptops.length < filteredLaptops.length;
+  const paginatedLaptops = displayLaptops.slice(0, page * pageSize);
+  const hasMore = paginatedLaptops.length < displayLaptops.length;
 
   return (
     <div>
       {/* Top Banner Stats */}
       <StatsBanner
         totalLaptops={allLaptops.length}
-        filteredCount={filteredLaptops.length}
+        filteredCount={currentTotal}
         avgScore={avgScore}
         avgPrice={avgPrice}
+        isLiveApi={isLiveApi}
       />
 
       {/* Main Grid: Filters Sidebar + Results Cards */}
@@ -198,6 +236,7 @@ export default function Recommendations({
                 }}
               >
                 <option value="performance">ML Performance Score (High to Low)</option>
+                <option value="balanced">Balanced (70% Perf + 30% Value)</option>
                 <option value="value">Value Index (Score / Price)</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>

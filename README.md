@@ -9,34 +9,44 @@ An intelligent, end-to-end Laptop Recommendation System combining a **Random For
 ```text
 laptop-recommendation/
 │
-├── frontend/
+├── backend/                              # FastAPI Machine Learning Service
+│   ├── app/
+│   │   ├── routes/
+│   │   │   ├── recommend.py              # POST /api/recommend, POST /api/predict-score
+│   │   │   ├── laptops.py                # GET /api/laptops, GET /api/laptops/{id}, GET /api/brands
+│   │   │   └── insights.py               # GET /api/ml-insights, GET /api/health
+│   │   ├── config.py                     # App settings & CORS configuration
+│   │   ├── models.py                     # Pydantic schemas
+│   │   ├── ml_service.py                 # Pipeline loading & real-time inference
+│   │   ├── recommendation.py             # Multi-stage filtering & ranking logic
+│   │   └── main.py                       # FastAPI entrypoint
+│   ├── artifacts/
+│   │   ├── rf_pipeline.joblib            # Serialized Random Forest Regressor Pipeline
+│   │   └── metrics.json                  # R² (0.992), MAE (0.47), RMSE (1.12), feature importances
+│   ├── data/
+│   │   └── laptops_clean.json            # Cleaned, scored, and persona-tagged laptops dataset
+│   ├── train_and_export.py               # Retrain and export ML artifacts
+│   ├── run_server.py                     # Uvicorn launcher script
+│   └── requirements.txt                  # Python backend dependencies
+│
+├── frontend/                             # React + Vite Interactive Application
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── FilterSidebar.jsx
-│   │   │   ├── LaptopCard.jsx
-│   │   │   ├── LaptopModal.jsx
-│   │   │   ├── ComparisonDrawer.jsx
-│   │   │   └── StatsBanner.jsx
-│   │   ├── pages/
-│   │   │   ├── Recommendations.jsx
-│   │   │   └── MLInsights.jsx
-│   │   ├── data/
-│   │   │   └── laptops.js
+│   │   ├── components/                   # Navbar, FilterSidebar, LaptopCard, Modal, Drawer, Stats
+│   │   ├── pages/                        # Recommendations & MLInsights
+│   │   ├── services/                     # api.js (FastAPI integration + offline fallback)
+│   │   ├── data/                         # laptops.js (fallback offline dataset)
 │   │   ├── App.jsx
 │   │   ├── main.jsx
 │   │   └── index.css
-│   │
-│   ├── public/
-│   │   └── favicon.svg
+│   ├── public/                           # Static assets
 │   ├── index.html
 │   ├── package.json
-│   └── vite.config.js
+│   └── vite.config.js                    # Vite configuration with /api reverse proxy
 │
-├── ml/
-│   ├── laptops.csv
-│   ├── laptop_recommendation.py
-│   └── Laptop_Recommendation_RandomForest_Organized.ipynb
+├── ml/                                   # Offline ML Experimentation
+│   ├── laptops.csv                       # Cleaned raw dataset
+│   ├── laptop_recommendation.py          # Standalone training and scoring script
+│   └── Laptop_Recommendation_RandomForest_Organized.ipynb # Jupyter Notebook
 │
 └── README.md
 ```
@@ -96,18 +106,16 @@ User Requirements (Budget, Usage, Hardware Specs)
 
 ## 🛠️ Getting Started
 
-### 1. Machine Learning Environment
-Run the Python recommendation pipeline or Jupyter Notebook:
+### 1. Launch FastAPI Backend
 ```bash
-# Navigate to the ml directory
-cd ml
+# Install dependencies
+pip install -r backend/requirements.txt
 
-# Run the recommendation script
-python laptop_recommendation.py
-
-# Or launch Jupyter Notebook
-jupyter notebook Laptop_Recommendation_RandomForest_Organized.ipynb
+# Start the FastAPI server
+python backend/run_server.py
 ```
+* **Interactive Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+* **ReDoc Documentation**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
 ### 2. Frontend Web Application
 Run the React + Vite web application:
@@ -120,6 +128,18 @@ npm install
 
 # Start development server
 npm run dev
+```
+
+### 3. Machine Learning Notebooks & Experimentation
+```bash
+# Navigate to the ml directory
+cd ml
+
+# Run the recommendation script
+python laptop_recommendation.py
+
+# Or launch Jupyter Notebook
+jupyter notebook Laptop_Recommendation_RandomForest_Organized.ipynb
 ```
 
 ---
